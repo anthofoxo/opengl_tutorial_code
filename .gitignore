@@ -1,0 +1,14 @@
+/.vs
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.workspace
+*xcworkspace
+*xcodeproj
+*.project
+Makefile
+/bin
+/bin-int
+imgui.ini
+/builds
