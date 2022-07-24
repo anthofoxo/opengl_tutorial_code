@@ -4,3 +4,6 @@
 [submodule "vendor/glad2"]
 	path = vendor/glad2
 	url = https://github.com/anthofoxo/glad2-pregen
+[submodule "vendor/spdlog"]
+	path = vendor/spdlog
+	url = https://github.com/gabime/spdlog

@@ -58,7 +58,8 @@ project "tutorial"
 	{
 		"%{prj.location}/src",
 		"%{wks.location}/vendor/glfw/include",
-		"%{wks.location}/vendor/glad2/include" -- glad2 include
+		"%{wks.location}/vendor/glad2/include",
+		"%{wks.location}/vendor/spdlog/include"
 	}
 	-- Allows us to include glad2/glfw headers without worrying about ordering
 	defines "GLFW_INCLUDE_NONE"
