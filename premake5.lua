@@ -54,21 +54,21 @@ project "tutorial"
 		"%{prj.location}/src/**.c",
 		"%{prj.location}/src/**.h"
 	}
-	-- We must specify the glfw include directyory in addition to our existing one
 	includedirs
 	{
 		"%{prj.location}/src",
-		"%{wks.location}/vendor/glfw/include"
+		"%{wks.location}/vendor/glfw/include",
+		"%{wks.location}/vendor/glad2/include" -- glad2 include
 	}
-	--[[
-	This section defines what to be linked with at compile time.
-	Premake makes it very easy to link other project just my specifying the project name
-	]]--
-	links "glfw"
-	--[[
-	On linux we must link with additional dependencies to allow glfw to function.
-	If these are not defined as a project, it will add the -l flag to the linker command.
-	]]--
+	-- Allows us to include glad2/glfw headers without worrying about ordering
+	defines "GLFW_INCLUDE_NONE"
+	links
+	{
+		"glfw",
+		"glad2" -- glad2 link
+	}
+	filter "system:windows"
+		links "opengl32" -- windows OpenGL link
 	filter "system:linux"
 		links
 		{
@@ -76,7 +76,6 @@ project "tutorial"
 			"pthread",
 			"X11"
 		}
-	-- On macosx we must link against these
 	filter "system:macosx"
 		links
 		{
@@ -161,3 +160,8 @@ project "glfw"
 		}
 		-- For macosx we are using the Cocoa api
 		defines "_GLFW_COCOA"
+project "glad2"
+	location "vendor/glad2"
+	language "C"
+	files "%{prj.location}/src/gl.c"
+	includedirs "%{prj.location}/include"
