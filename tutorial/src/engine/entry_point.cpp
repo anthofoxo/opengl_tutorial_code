@@ -1,4 +1,4 @@
-#ifdef _WIN32
+#ifdef _WIN32 // Only do this on windows
 #	define WIN32_LEAN_AND_MEAN // Makes the windows header a bit smaller
 #	define NOMINMAX // Do not define min or max in the windows headers
 #	include <Windows.h>
