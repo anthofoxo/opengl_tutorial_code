@@ -1,4 +1,10 @@
+#ifdef _WIN32
+#	define WIN32_LEAN_AND_MEAN // Makes the windows header a bit smaller
+#	define NOMINMAX // Do not define min or max in the windows headers
+#	include <Windows.h>
+#endif
 #include <GLFW/glfw3.h>
+
 #include <glad/gl.h>
 #include <spdlog/spdlog.h>
 
@@ -10,16 +16,40 @@ int main()
 	// Say hello!
 	spdlog::info("Hello spdlog!");
 
-	// Window and context creation code
-	glfwInit();
+	glfwSetErrorCallback([](int error_code, const char* description)
+		{
+			spdlog::error("Glfw error {}: {}", error_code, description);
+		});
+
+	if(!glfwInit())
+	{
+		spdlog::critical("Glfw initialization failed");
+		return EXIT_FAILURE; // When failure occurs, return a failure code
+	}
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_CONTEXT_NO_ERROR, GLFW_FALSE);
 	GLFWwindow* window = glfwCreateWindow(1280, 720, "Hello Window", nullptr, nullptr);
+
+	if (!window)
+	{
+		glfwTerminate(); // Terminate glfw before returning
+		spdlog::critical("Failed to create window");
+		return EXIT_FAILURE;
+	}
+
 	glfwMakeContextCurrent(window);
-	gladLoadGL(&glfwGetProcAddress);
+
+	if (!gladLoadGL(&glfwGetProcAddress))
+	{
+		glfwDestroyWindow(window);
+		glfwTerminate();
+		spdlog::critical("Failed to obtain OpenGL functions");
+		return EXIT_FAILURE;
+	}
 
 	// OpenGL setup
 	glClearColor(1.0f, 0.5f, 0.0f, 1.0f);
