@@ -10,10 +10,8 @@
 
 int main()
 {
-	// spdlog default it's log level to trace, change it to trace so we can see all output.
 	spdlog::set_level(spdlog::level::trace);
 
-	// Say hello!
 	spdlog::info("Hello spdlog!");
 
 	glfwSetErrorCallback([](int error_code, const char* description)
@@ -24,7 +22,7 @@ int main()
 	if(!glfwInit())
 	{
 		spdlog::critical("Glfw initialization failed");
-		return EXIT_FAILURE; // When failure occurs, return a failure code
+		return EXIT_FAILURE;
 	}
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -36,7 +34,7 @@ int main()
 
 	if (!window)
 	{
-		glfwTerminate(); // Terminate glfw before returning
+		glfwTerminate();
 		spdlog::critical("Failed to create window");
 		return EXIT_FAILURE;
 	}
@@ -51,22 +49,37 @@ int main()
 		return EXIT_FAILURE;
 	}
 
-	// OpenGL setup
 	glClearColor(1.0f, 0.5f, 0.0f, 1.0f);
 
-	// Main loop
+	// Create vao/vbo
+	float data[] = { -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f };
+
+	GLuint vbo;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao); // This stays bound for our draw call
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
 	while(!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
 
 		glClear(GL_COLOR_BUFFER_BIT);
+		// Draw call
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glfwSwapBuffers(window);
 	}
 
-	// Shutdown glfw
+	// Delete objects
+	glDeleteVertexArrays(1, &vao);
+	glDeleteBuffers(1, &vbo);
+
 	glfwDestroyWindow(window);
 	glfwTerminate();
-
-	// After program exits, it's not a bad idea to explicitly shutdown spdlog
 	spdlog::shutdown();
 }
